@@ -26,7 +26,7 @@ public class SnowflakeIdGenerator
     private readonly object _lock = new();
 
     private long _lastTimestamp = -1L;
-    private long _sequence = 0L;
+    private long _sequence;
 
     public SnowflakeIdGenerator(long workerId = 1)
     {

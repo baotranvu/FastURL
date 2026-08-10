@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enable built-in .NET 8 Roslyn Analyzers across all projects -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>
