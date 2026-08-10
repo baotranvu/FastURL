@@ -2,7 +2,7 @@ name: FastUrl.API CI/CD & Security Analysis
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "feature/*", "test/*" ]
   pull_request:
     branches: [ "main", "master" ]
 
