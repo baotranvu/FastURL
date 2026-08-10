@@ -6,6 +6,7 @@ using FastUrl.Domain.Common;
 using FastUrl.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FastUrl.API.Controllers;
 
@@ -125,6 +126,19 @@ public class UrlController : ControllerBase
             hasMore,
             limit = safeLimit
         });
+    }
+
+    /// <summary>
+    /// DEMO ONLY: Endpoint chứa lỗ hổng SQL Injection trực tiếp từ HTTP Source sang Database Sink để test CodeQL SAST.
+    /// DELETE /api/v1/urls/demo-vulnerable/{code}
+    /// </summary>
+    [HttpDelete("api/v1/urls/demo-vulnerable/{code}")]
+    public async Task<IActionResult> DeleteVulnerable(string code, [FromServices] FastUrl.Infrastructure.Persistence.FastUrlDbContext dbContext)
+    {
+        // 🔴 HTTP SOURCE ('code') CHẢY THẲNG VÀO DATABASE SINK (ExecuteSqlRawAsync):
+        string rawSql = "DELETE FROM ShortUrls WHERE ShortCode = '" + code + "'";
+        await dbContext.Database.ExecuteSqlRawAsync(rawSql);
+        return Ok(new { message = "Deleted via vulnerable endpoint", query = rawSql });
     }
 }
 
