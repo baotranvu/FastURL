@@ -43,25 +43,6 @@ namespace FastUrl.Domain.Common
             return EncodeStackAlloc(id);
         }
 
-        /// <summary>
-        /// PHIÊN BẢN 1 (Private): Mã hóa dùng StringBuilder + Array.Reverse() (Tiêu chuẩn dễ đọc)
-        /// </summary>
-        private static string EncodeStringBuilder(long id)
-        {
-            var sb = new StringBuilder();
-            var tempId = id;
-
-            while (tempId > 0)
-            {
-                int remainder = (int)(tempId % Base);
-                sb.Append(Alphabet[remainder]);
-                tempId /= Base;
-            }
-
-            char[] charArray = sb.ToString().ToCharArray();
-            Array.Reverse(charArray);
-            return new string(charArray);
-        }
 
         /// <summary>
         /// PHIÊN BẢN 2 (Private): Mã hóa dùng stackalloc + Span (Tối ưu Zero-Allocation High Performance)
