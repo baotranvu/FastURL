@@ -28,13 +28,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: 📦 Restore Dependencies
-        run: dotnet restore FastUrl.slnx
+        run: dotnet restore
 
       - name: 🔨 Build Solution (Release Mode)
-        run: dotnet build FastUrl.slnx -c Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: 🧪 Execute Unit Tests
-        run: dotnet test FastUrl.slnx -c Release --no-build --verbosity normal
+        run: dotnet test -c Release --no-build --verbosity normal
 
   # =======================================================
   # JOB 2: SECURITY & CODE QUALITY ANALYSIS (CodeQL)
@@ -56,12 +56,11 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: 'csharp'
-          queries: security-extended,security-and-quality
 
       - name: 🔨 Build Solution for Analysis
         run: |
-          dotnet restore FastUrl.slnx
-          dotnet build FastUrl.slnx -c Release --no-restore
+          dotnet restore
+          dotnet build -c Release --no-restore
 
       - name: 📊 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
