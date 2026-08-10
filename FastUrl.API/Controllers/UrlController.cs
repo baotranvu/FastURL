@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FastUrl.API.Controllers;
 
 [ApiController]
+[Route("[controller]")]
 public class UrlController : ControllerBase
 {
     private readonly IShortCodeCodec _codec;
@@ -70,7 +71,7 @@ public class UrlController : ControllerBase
     /// Redirect từ mã ngắn về original URL (HTTP 302 Found) sử dụng B-Tree Index
     /// GET /{shortCode}
     /// </summary>
-    [HttpGet("{shortCode}")]
+    [HttpGet("/{shortCode}")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RedirectUrl(string shortCode, CancellationToken cancellationToken)
