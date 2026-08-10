@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="FastUrl.API/FastUrl.API.csproj" />
+  <Project Path="FastUrl.Application/FastUrl.Application.csproj" />
+  <Project Path="FastUrl.Domain.Tests/FastUrl.Domain.Tests.csproj" />
+  <Project Path="FastUrl.Domain/FastUrl.Domain.csproj" />
+  <Project Path="FastUrl.Infrastructure/FastUrl.Infrastructure.csproj" />
+</Solution>

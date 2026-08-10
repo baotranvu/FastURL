@@ -1,0 +1,19 @@
+## Ignore Visual Studio & .NET build artifacts
+.vs/
+.vscode/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## OS generated files
+[Dd]esktop.ini
+Thumbs.db
+.DS_Store
+
+## Database files
+*.db
+*.sqlite
+*.sqlite3

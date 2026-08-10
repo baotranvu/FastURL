@@ -1,0 +1,12 @@
+.idea/
+.vs/
+.vscode/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.git/
+.gitignore
+README.md

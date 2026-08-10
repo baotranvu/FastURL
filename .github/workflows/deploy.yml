@@ -1,0 +1,128 @@
+name: FastUrl.API CI/CD & Security Analysis
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # =======================================================
+  # JOB 1: BUILD & UNIT TESTING (CI)
+  # =======================================================
+  build-and-test:
+    name: 🧪 CI: Build & Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 📦 Restore Dependencies
+        run: dotnet restore FastUrl.slnx
+
+      - name: 🔨 Build Solution (Release Mode)
+        run: dotnet build FastUrl.slnx -c Release --no-restore
+
+      - name: 🧪 Execute Unit Tests
+        run: dotnet test FastUrl.slnx -c Release --no-build --verbosity normal
+
+  # =======================================================
+  # JOB 2: SECURITY & CODE QUALITY ANALYSIS (CodeQL)
+  # =======================================================
+  code-security-analysis:
+    name: 🛡️ Security: CodeQL Security Scan
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Initialize CodeQL (Official Security Analyzer)
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+          queries: security-extended,security-and-quality
+
+      - name: 🔨 Build Solution for Analysis
+        run: |
+          dotnet restore FastUrl.slnx
+          dotnet build FastUrl.slnx -c Release --no-restore
+
+      - name: 📊 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # =======================================================
+  # JOB 3: DOCKER BUILD & PUSH TO GHCR (CD)
+  # =======================================================
+  docker-build-push:
+    name: 🐳 CD: Docker Package & Push to GHCR
+    needs: code-security-analysis
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Authenticate to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract Metadata & Tagging
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=true
+            type=sha,prefix=sha-,format=short
+
+      - name: 🚀 Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  # =======================================================
+  # JOB 4: CLOUD DEPLOYMENT TRIGGER (CD)
+  # =======================================================
+  deploy-cloud:
+    name: ☁️ CD: Trigger Cloud Host Auto-Deploy
+    needs: docker-build-push
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🌐 Trigger Deploy Hook Webhook
+        run: |
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "🚀 Sending Deployment Trigger to Render..."
+            curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+            echo "✅ Deployment trigger sent successfully."
+          else
+            echo "ℹ️ RENDER_DEPLOY_HOOK_URL secret not configured yet. Skipping webhook call."
+          fi

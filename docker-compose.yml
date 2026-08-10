@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  fasturl-api:
+    container_name: fasturl_api_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5050:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - SnowflakeOptions__WorkerId=1
+      - DatabaseProvider=PostgreSQL
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=fasturl_db;Username=postgres;Password=postgres
+      - ConnectionStrings__Redis=redis:6379
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    container_name: fasturl_postgres_container
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=fasturl_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    container_name: fasturl_redis_container
+    image: redis:alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+
+
+

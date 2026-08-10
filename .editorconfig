@@ -1,0 +1,13 @@
+root = true
+
+[*.cs]
+# Thụt lề bằng khoảng trắng (Spaces) thay vì Tab, độ rộng là 4
+indent_style = space
+indent_size = 4
+
+# Dấu ngoặc nhọn mở đầu phải nằm ở dòng mới (Allman style chuẩn C#)
+csharp_new_line_before_open_brace = all
+
+# Yêu cầu biến private phải bắt đầu bằng dấu gạch dưới (ví dụ: _urlRepository)
+dotnet_naming_rule.private_members_with_underscore.symbols = private_fields
+dotnet_naming_rule.private_members_with_underscore.style = prefix_underscore
