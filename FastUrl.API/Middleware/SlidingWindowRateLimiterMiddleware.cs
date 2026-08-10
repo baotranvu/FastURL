@@ -13,7 +13,8 @@ public class SlidingWindowRateLimiterMiddleware(
 
     public async Task InvokeAsync(HttpContext context)
     {
-        logger.LogInformation("RateLimiter invoked for Path: {Path}. Redis null: {IsNull}, IsConnected: {IsConnected}", context.Request.Path, redis == null, redis?.IsConnected);
+        var safePath = (context.Request.Path.Value ?? string.Empty).Replace("\r", "").Replace("\n", "");
+        logger.LogInformation("RateLimiter invoked for Path: {Path}. Redis null: {IsNull}, IsConnected: {IsConnected}", safePath, redis == null, redis?.IsConnected);
 
         // 1. Nếu Redis connection không sẵn sàng, log warning và fallback qua an toàn (Fail-Open Pattern)
         if (redis == null || !redis.IsConnected)
