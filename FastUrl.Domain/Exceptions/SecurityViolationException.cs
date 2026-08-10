@@ -7,6 +7,10 @@ namespace FastUrl.Domain.Exceptions;
 /// </summary>
 public class SecurityViolationException : Exception
 {
+    public SecurityViolationException() : base()
+    {
+    }
+
     public SecurityViolationException(string message) : base(message)
     {
     }

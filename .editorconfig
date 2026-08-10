@@ -1,13 +1,34 @@
+# Top-most EditorConfig file for FastUrl.API solution
 root = true
 
 [*.cs]
-# Thụt lề bằng khoảng trắng (Spaces) thay vì Tab, độ rộng là 4
-indent_style = space
-indent_size = 4
+# =======================================================
+# 1. C# CODING CONVENTIONS & ROSLYN ANALYZER RULES
+# =======================================================
+csharp_style_expression_bodied_methods = true:suggestion
+csharp_style_expression_bodied_constructors = true:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_using_directive_placement = outside_namespace:suggestion
 
-# Dấu ngoặc nhọn mở đầu phải nằm ở dòng mới (Allman style chuẩn C#)
-csharp_new_line_before_open_brace = all
+dotnet_diagnostic.CA1032.severity = warning # Exception constructors
+dotnet_diagnostic.CA1805.severity = warning # Explicit default initialization
+dotnet_diagnostic.CA1848.severity = suggestion # LoggerMessage delegate suggestion
+dotnet_diagnostic.CA1873.severity = suggestion # Logging argument evaluation cost
 
-# Yêu cầu biến private phải bắt đầu bằng dấu gạch dưới (ví dụ: _urlRepository)
-dotnet_naming_rule.private_members_with_underscore.symbols = private_fields
-dotnet_naming_rule.private_members_with_underscore.style = prefix_underscore
+# =======================================================
+# 2. SONARANALYZER.CSHARP RULES (SONARQUBE RULES)
+# =======================================================
+dotnet_diagnostic.S107.severity = warning  # Methods should not have too many parameters
+dotnet_diagnostic.S1135.severity = suggestion # Track TODO comments
+dotnet_diagnostic.S2699.severity = warning # Tests should have assertions
+dotnet_diagnostic.S1118.severity = warning # Utility classes should not have public constructors
+dotnet_diagnostic.S1481.severity = warning # Unused local variables
+
+# =======================================================
+# 3. SECURITY CODE SCAN RULES (SCS - SAST ANITY RULES)
+# =======================================================
+dotnet_diagnostic.SCS0001.severity = error # Command Injection
+dotnet_diagnostic.SCS0002.severity = error # SQL Injection
+dotnet_diagnostic.SCS0005.severity = error # Weak Random Generator
+dotnet_diagnostic.SCS0016.severity = warning # CSRF protection missing
