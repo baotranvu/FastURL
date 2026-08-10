@@ -12,20 +12,28 @@ Bộ quy định này quản lý việc lập trình, thiết kế kiến trúc 
 
 ---
 
-## 🔒 2. RULE 7.0 — AI AGENT SELF-CORRECTION PROTOCOL (BẮT BUỘC)
+## 🔒 2. RULE 7.0 & 7.1 — AI AGENT SELF-CORRECTION & TIERED AUTO-FIX PROTOCOL (BẮT BUỘC)
 
 Mỗi khi AI Agent / Subagent sinh mã nguồn C# hoặc chỉnh sửa file cho dự án `FastUrl.API`:
 
+### Rule 7.0: Local Inspection First
 1. **Khởi Chạy Local Inspection**:
    - AI Agent **bắt buộc phải chạy `dotnet build` tại local** trước khi trình bày code cho User.
    - Quá trình build sẽ tự động kích hoạt `SonarAnalyzer.CSharp`, `SecurityCodeScan` và `Roslyn Analyzers`.
 
-2. **Quy Trình Tự Sửa Lỗi (Self-Fix Loop)**:
-   - Nếu build xuất hiện Warning hoặc Error từ Sonar (S-rules), Security (SCS-rules) hoặc Roslyn (CA-rules):
-   - AI Agent **bắt buộc phải tự đọc vị trí dòng lỗi và tự động sửa (Self-Fix)** cho đến khi build đạt 0 Error và 0 Warning nguy hiểm.
-
-3. **Chỉ Push / Handoff Khi Local Clean 100%**:
+2. **Chỉ Push / Handoff Khi Local Clean 100%**:
    - AI tuyệt đối không commit hoặc push code dính lỗi biên dịch hay lỗi bảo mật chưa được xử lý.
+
+### Rule 7.1: Tiered Warning Auto-Fix Protocol (Phân Loại Tự Động Sửa Warnings)
+Khi `dotnet build` trả về các cảnh báo (Warnings), AI Agent phân loại và xử lý theo 2 nhóm:
+
+* **🟢 Nhóm A (Safe Auto-Fix - Tự động sửa 100%)**:
+  - **Bao gồm**: Các cảnh báo Performance, Code Style, Formatting, Unused Variables (e.g., `S1481`, `CA1848`, `CA1805`, `S3267`).
+  - **Quy tắc**: AI Agent **tự động sửa 100%** và chạy lại `dotnet test`. Nếu 100% Unit Tests pass -> Chấp nhận cho qua!
+
+* **🟡 Nhóm B (Architectural Review - Phân tích rủi ro & đề xuất)**:
+  - **Bao gồm**: Các cảnh báo đụng chạm API Contract, Database Schema, EF Core Entity Types, Exception Hierarchy (e.g., `CA1056`, `CA1054`, `CA1032`).
+  - **Quy tắc**: AI Agent phải đánh giá rủi ro: Nếu việc sửa cảnh báo làm vỡ API Contract hoặc EF Core Migration, AI sẽ giữ nguyên kiểu dữ liệu và dùng `[SuppressMessage]` kèm lời giải thích rõ ràng cho User.
 
 ---
 
