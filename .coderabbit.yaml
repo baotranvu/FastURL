@@ -9,5 +9,6 @@ reviews:
     - "!**/*.md"
     - "!docs/**"
     - "!.agent/**"
+    - "!.gitignore"
     - "!**/*.png"
     - "!**/*.jpg"
