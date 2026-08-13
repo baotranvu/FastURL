@@ -6,8 +6,8 @@ reviews:
   high_level_summary: true
   poem: false
   path_filters:
-    - "!**.md"
+    - "!**/*.md"
     - "!docs/**"
     - "!.agent/**"
-    - "!**.png"
-    - "!**.jpg"
+    - "!**/*.png"
+    - "!**/*.jpg"
