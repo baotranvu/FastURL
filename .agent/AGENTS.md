@@ -12,7 +12,7 @@ Bộ quy định này quản lý việc lập trình, thiết kế kiến trúc 
 
 ---
 
-## 🔒 2. RULE 7.0 & 7.1 — AI AGENT SELF-CORRECTION & TIERED AUTO-FIX PROTOCOL (BẮT BUỘC)
+## 🔒 2. BỘ QUY TẮC PHÁT TRIỂN & BẢO MẬT (RULES 7.0 - 7.5)
 
 Mỗi khi AI Agent / Subagent sinh mã nguồn C# hoặc chỉnh sửa file cho dự án `FastUrl.API`:
 
@@ -35,6 +35,34 @@ Khi `dotnet build` trả về các cảnh báo (Warnings), AI Agent phân loại
   - **Bao gồm**: Các cảnh báo đụng chạm API Contract, Database Schema, EF Core Entity Types, Exception Hierarchy (e.g., `CA1056`, `CA1054`, `CA1032`).
   - **Quy tắc**: AI Agent phải đánh giá rủi ro: Nếu việc sửa cảnh báo làm vỡ API Contract hoặc EF Core Migration, AI sẽ giữ nguyên kiểu dữ liệu và dùng `[SuppressMessage]` kèm lời giải thích rõ ràng cho User.
 
+### Rule 7.2: Local AI Code Review Protocol
+- Trước khi commit/push, AI Agent (vai trò `qa_tester` / `sec_agent`) thực hiện bước Local AI Review:
+  1. Đọc `git diff` các file vừa thay đổi tại local.
+  2. Kiểm tra tuân thủ Clean Architecture, Security (SQLi, Log Injection), và Naming Rules.
+  3. Nếu phát hiện vi phạm, AI tự động fix hoặc cảnh báo cho User ngay tại Local Terminal.
+
+### Rule 7.3: Fast-Path for Documentation & Non-Code Edits (Bỏ Qua Inspection Cho File Phi-Code)
+- **Điều kiện**: Khi commit CHỈ chứa các thay đổi thuộc loại:
+  - File Markdown (`*.md`), Tài liệu (`docs/**`), File cấu hình Agent (`.agent/**`), tệp hình ảnh (`*.png`, `*.jpg`), hoặc `.gitignore`.
+- **Hành vi**:
+  - ❌ AI Agent **bỏ qua không chạy** `dotnet build` & `dotnet test`.
+  - ❌ AI Agent **bỏ qua không gọi** AI Reviewer nặng.
+  - ✅ Cho phép Commit & Push trực tiếp qua **Fast-Path** để tiết kiệm thời gian và tài nguyên!
+
+### Rule 7.4: Conventional Commits Standard (Chuẩn Format Commit Message)
+- Tất cả commit messages phải tuân theo định dạng: `<type>(<scope>): <short description>`.
+- Các tiền tố hợp lệ:
+  - `feat`: Tính năng mới (Feature).
+  - `fix`: Sửa lỗi bug (Bug fix).
+  - `docs`: Sửa tài liệu markdown hoặc comment.
+  - `refactor`: Refactor code không đổi tính năng.
+  - `test`: Thêm/sửa unit tests.
+  - `chore`: Thay đổi cấu hình build, CI/CD, dependencies.
+
+### Rule 7.5: Why-Only Code Comment Standard (Chuẩn Viết Comment)
+- **Public API Controllers & Interfaces**: Bắt buộc có XML Doc Comments (`/// <summary>`) để Swagger UI tự sinh tài liệu.
+- **Internal Method Body**: Cấm comment diễn giải "WHAT" (code làm gì). **Chỉ comment giải thích "WHY" (Lý do thiết kế/đánh đổi kỹ thuật ngầm)**.
+
 ---
 
 ## 🛠️ 3. QUY TRÌNH "LOCAL BUILD FIRST"
@@ -53,7 +81,7 @@ Mọi Pull Request đẩy lên GitHub đều trải qua luồng thẩm định t
    - Mỗi khi PR được tạo từ `feature/*` hoặc `fix/*` vào `main`, bot AI Code Reviewer tự động đọc diff mã nguồn.
 2. **Tiêu Chí Thẩm Định Của AI Reviewer**:
    - Tóm tắt PR (PR Summary & Walkthrough).
-   - Kiểm tra tuân thủ Rule 7.0 & Rule 7.1 (Sonar, Roslyn & Security warnings).
+   - Kiểm tra tuân thủ Rules 7.0 - 7.5 (Sonar, Roslyn & Security warnings).
    - Đánh giá kiến trúc Clean Architecture & tối ưu hiệu năng C#.
    - Đưa ra nhận xét trực tiếp trên từng dòng code (Line-by-line Actionable Comments).
 3. **Điều Kiện Merge (Quality Gate Approval)**:

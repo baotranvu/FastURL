@@ -3,8 +3,22 @@ name: FastUrl.API CI/CD & Security Analysis
 on:
   push:
     branches: [ "main", "master", "feature/*", "test/*" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.agent/**'
+      - '.gitignore'
+      - '**.png'
+      - '**.jpg'
   pull_request:
     branches: [ "main", "master" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.agent/**'
+      - '.gitignore'
+      - '**.png'
+      - '**.jpg'
 
 env:
   REGISTRY: ghcr.io
