@@ -14,6 +14,8 @@ Bộ quy định này quản lý việc lập trình, thiết kế kiến trúc 
 
 ## 🔒 2. BỘ QUY TẮC PHÁT TRIỂN & BẢO MẬT (RULES 7.0 - 7.5)
 
+Mỗi khi AI Agent / Subagent sinh mã nguồn C# hoặc chỉnh sửa file cho dự án `FastUrl.API`:
+
 ### Rule 7.0: Local Inspection First
 1. **Khởi Chạy Local Inspection**:
    - AI Agent **bắt buộc phải chạy `dotnet build` tại local** trước khi trình bày code cho User.
@@ -23,6 +25,8 @@ Bộ quy định này quản lý việc lập trình, thiết kế kiến trúc 
    - AI tuyệt đối không commit hoặc push code dính lỗi biên dịch hay lỗi bảo mật chưa được xử lý.
 
 ### Rule 7.1: Tiered Warning Auto-Fix Protocol (Phân Loại Tự Động Sửa Warnings)
+Khi `dotnet build` trả về các cảnh báo (Warnings), AI Agent phân loại và xử lý theo 2 nhóm:
+
 * **🟢 Nhóm A (Safe Auto-Fix - Tự động sửa 100%)**:
   - **Bao gồm**: Các cảnh báo Performance, Code Style, Formatting, Unused Variables (e.g., `S1481`, `CA1848`, `CA1805`, `S3267`).
   - **Quy tắc**: AI Agent **tự động sửa 100%** và chạy lại `dotnet test`. Nếu 100% Unit Tests pass -> Chấp nhận cho qua!
